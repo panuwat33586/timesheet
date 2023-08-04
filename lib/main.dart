@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timesheet/widgets/TimesheetTile.dart';
+import 'package:timesheet/widgets/timesheet_tile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
       "project_name": "Project A",
       "task": "Implement/Development",
       "detail": "- fix ui and more ",
-      "timesheet_status": "Waiting",
+      "timesheet_status": "w",
       "leave": 0,
       "start_time": "09:00:00",
       "finish_time": "13:00:00",
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       "project_name": "Project B",
       "task": "Self-Learn, Read, Research ...",
       "detail": "Research on flutter",
-      "timesheet_status": "Waiting",
+      "timesheet_status": "w",
       "leave": 0,
       "start_time": "14:00:00",
       "finish_time": "18:00:00",
@@ -76,10 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
               height: maxHeight * 0.5,
               child: ListView.builder(
-                itemCount: timesheets.length,
-                itemBuilder: (BuildContext context, int index) =>
-                    TimeSheetTile(timesheet: timesheets[index]),
-              ))
+                  itemCount: timesheets.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      TimeSheetTile(
+                        timesheet: timesheets[index],
+                        deleteTimesheet: () => timesheets.removeAt(index),
+                      )))
         ],
       ),
     );
