@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:timesheet/widgets/timesheet_tile.dart';
+import 'package:timesheet/screens/edit_timesheet_screen.dart';
+import 'package:timesheet/screens/timesheet_screen.dart';
+
+extension TimeOfDayConverter on TimeOfDay {
+  String to24hours() {
+    final hour = this.hour.toString().padLeft(2, "0");
+    final min = this.minute.toString().padLeft(2, "0");
+    return "$hour:$min";
+  }
+}
 
 void main() {
   runApp(const MyApp());
@@ -12,78 +21,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Timesheet-App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<Map<String, dynamic>> timesheets = [
-    {
-      "timesheet_id": 1,
-      "date": "2023-08-03",
-      "man_hour": 4,
-      "project_name": "Project A",
-      "task": "Implement/Development",
-      "detail": "- fix ui and more ",
-      "timesheet_status": "w",
-      "leave": 0,
-      "start_time": "09:00:00",
-      "finish_time": "13:00:00",
-      "task_id": 1,
-      "project_id": 1
-    },
-    {
-      "timesheet_id": 2,
-      "date": "2023-08-03",
-      "man_hour": 4,
-      "project_name": "Project B",
-      "task": "Self-Learn, Read, Research ...",
-      "detail": "Research on flutter",
-      "timesheet_status": "w",
-      "leave": 0,
-      "start_time": "14:00:00",
-      "finish_time": "18:00:00",
-      "task_id": 2,
-      "project_id": 2
-    }
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    var maxHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Timesheet'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-              height: maxHeight * 0.5,
-              child: ListView.builder(
-                  itemCount: timesheets.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                      TimeSheetTile(
-                        timesheet: timesheets[index],
-                        deleteTimesheet: () => timesheets.removeAt(index),
-                      )))
-        ],
-      ),
+      initialRoute: TimesheetScreen.routeName,
+      routes: {
+        TimesheetScreen.routeName: (ctx) => TimesheetScreen(),
+        EditTimesheetScreen.routeName: (ctx) => EditTimesheetScreen()
+      },
     );
   }
 }
