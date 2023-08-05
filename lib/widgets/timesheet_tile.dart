@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timesheet/models/timesheet.model.dart';
+import 'package:timesheet/providers/timesheet_provider.dart';
 import 'package:timesheet/widgets/confirm_dialog.dart';
 import 'package:timesheet/widgets/timesheet_status.dart';
 
 import 'list_detail.dart';
 
-class TimeSheetTile extends StatelessWidget {
-  Map<String, dynamic> timesheet;
-  Function deleteTimesheet;
+class TimeSheetTile extends ConsumerWidget {
+  Timesheet timesheet;
 
   Future<bool?> _handleDismiss(
       BuildContext context, DismissDirection direction) {
@@ -21,16 +23,22 @@ class TimeSheetTile extends StatelessWidget {
     }
   }
 
-  TimeSheetTile(
-      {super.key, required this.timesheet, required this.deleteTimesheet});
+  TimeSheetTile({super.key, required this.timesheet});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
-      key: Key(timesheet['timesheet_id'].toString()),
+      key: Key(timesheet.timesheet_id),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
-          deleteTimesheet();
+          ref
+              .read(timesheetProvider.notifier)
+              .deleteTimesheet(timesheet.timesheet_id);
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('successfully delete timesheet'),
+            backgroundColor: Color(Colors.green.shade300.value),
+          ));
         }
       },
       confirmDismiss: (direction) {
@@ -53,9 +61,9 @@ class TimeSheetTile extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: ExpansionTile(
-        leading: TimesheetStatus(status: timesheet['timesheet_status']),
+        leading: TimesheetStatus(status: timesheet.timesheet_status),
         title: Text(
-          timesheet['project_name'],
+          timesheet.project_name,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -64,21 +72,19 @@ class TimeSheetTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "${timesheet['start_time']} - ${timesheet['finish_time']}",
+              "${timesheet.start_time} - ${timesheet.finish_time}",
             ),
             Container(
               margin: const EdgeInsets.only(left: 20),
               child: Chip(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
-                label: Text("${timesheet['man_hour']} hours"),
+                label: Text("${timesheet.man_hour} hours"),
               ),
             )
           ],
         ),
-        children: [
-          ListDetail(title: timesheet['task'], detail: timesheet['detail'])
-        ],
+        children: [ListDetail(title: timesheet.task, detail: timesheet.detail)],
       ),
     );
   }

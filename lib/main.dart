@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timesheet/screens/edit_timesheet_screen.dart';
 import 'package:timesheet/screens/timesheet_screen.dart';
 
@@ -6,12 +7,12 @@ extension TimeOfDayConverter on TimeOfDay {
   String to24hours() {
     final hour = this.hour.toString().padLeft(2, "0");
     final min = this.minute.toString().padLeft(2, "0");
-    return "$hour:$min";
+    return "$hour:$min:00";
   }
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -28,8 +29,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: TimesheetScreen.routeName,
       routes: {
-        TimesheetScreen.routeName: (ctx) => TimesheetScreen(),
-        EditTimesheetScreen.routeName: (ctx) => EditTimesheetScreen()
+        TimesheetScreen.routeName: (ctx) => const TimesheetScreen(),
+        EditTimesheetScreen.routeName: (ctx) => const EditTimesheetScreen()
       },
     );
   }
