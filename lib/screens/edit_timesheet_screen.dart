@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:timesheet/main.dart';
 import 'package:timesheet/models/timesheet.model.dart';
 import 'package:timesheet/providers/timesheet_provider.dart';
@@ -101,6 +102,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
     var selectTask = (selectProject['tasks'] as List<Map<String, dynamic>>)
         .firstWhere((task) => task['task_id'] == selectedTask);
     var newTimeSheet = Timesheet(
+        selectedDate.toIso8601String(),
         manHour,
         selectProject['name'],
         selectTask['task'],
@@ -123,6 +125,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
         .firstWhere((project) => project['project_id'] == selectedProject);
     var selectTask = (selectProject['tasks'] as List<Map<String, dynamic>>)
         .firstWhere((task) => task['task_id'] == selectedTask);
+    timesheet.date = selectedDate.toIso8601String();
     timesheet.man_hour = manHour;
     timesheet.project_name = selectProject['name'];
     timesheet.task = selectTask['task'];

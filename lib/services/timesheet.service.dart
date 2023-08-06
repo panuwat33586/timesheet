@@ -13,6 +13,7 @@ class TimesheetService {
     try {
       var timesheetList = response.data?.map((timesheet) {
         final timesheetObj = Timesheet(
+            timesheet['date'],
             timesheet['man_hour'],
             timesheet['project_name'],
             timesheet['task'],

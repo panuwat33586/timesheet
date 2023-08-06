@@ -2,7 +2,7 @@ import 'package:uuid/uuid.dart';
 
 class Timesheet {
   String timesheet_id = Uuid().v4().toString();
-  String date = DateTime.now().toString();
+  String date;
   int man_hour;
   String project_name;
   String task;
@@ -14,6 +14,7 @@ class Timesheet {
   int project_id;
 
   Timesheet(
+    this.date,
     this.man_hour,
     this.project_name,
     this.task,

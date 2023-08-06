@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:timesheet/models/timesheet.model.dart';
 import 'package:timesheet/providers/timesheet_provider.dart';
 import 'package:timesheet/screens/edit_timesheet_screen.dart';
@@ -82,8 +83,17 @@ class TimeSheetTile extends ConsumerWidget {
         subtitle: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              "${timesheet.start_time} - ${timesheet.finish_time}",
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DateFormat('dd-MM-yyyy')
+                      .format(DateTime.parse(timesheet.date)),
+                ),
+                Text(
+                  "${timesheet.start_time} - ${timesheet.finish_time}",
+                ),
+              ],
             ),
             Container(
               margin: const EdgeInsets.only(left: 20),
