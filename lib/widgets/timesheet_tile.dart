@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timesheet/models/timesheet.model.dart';
 import 'package:timesheet/providers/timesheet_provider.dart';
+import 'package:timesheet/screens/edit_timesheet_screen.dart';
 import 'package:timesheet/widgets/confirm_dialog.dart';
 import 'package:timesheet/widgets/timesheet_status.dart';
 
@@ -19,8 +20,30 @@ class TimeSheetTile extends ConsumerWidget {
               title: 'Delete Timesheet',
               detail: 'Are you sure you want to delete this timesheet'));
     } else {
+      editTimesheet(context);
       return Future(() => false);
     }
+  }
+
+  deleteTimeSheet(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    ref
+        .read(timesheetProvider.notifier)
+        .deleteTimesheet(timesheet.timesheet_id);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('successfully delete timesheet'),
+      backgroundColor: Color(Colors.green.shade300.value),
+    ));
+  }
+
+  editTimesheet(BuildContext context) {
+    Navigator.of(context).pushNamed(EditTimesheetScreen.routeName, arguments: {
+      'type': 'edit',
+      'props': {'timesheetId': timesheet.timesheet_id}
+    });
   }
 
   TimeSheetTile({super.key, required this.timesheet});
@@ -31,14 +54,7 @@ class TimeSheetTile extends ConsumerWidget {
       key: Key(timesheet.timesheet_id),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
-          ref
-              .read(timesheetProvider.notifier)
-              .deleteTimesheet(timesheet.timesheet_id);
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text('successfully delete timesheet'),
-            backgroundColor: Color(Colors.green.shade300.value),
-          ));
+          deleteTimeSheet(context, ref);
         }
       },
       confirmDismiss: (direction) {

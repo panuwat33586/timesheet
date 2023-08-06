@@ -44,8 +44,8 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
   List<Map<String, dynamic>> selectedProjectTasks = [];
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedDate;
-  late int? selectedProject;
-  late int? selectedTask;
+  int? selectedProject;
+  int? selectedTask;
   final TimeOfDay initialTime = const TimeOfDay(hour: 0, minute: 0);
 
   Future<void> _selectDate(BuildContext context) async {
@@ -66,7 +66,9 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
   Future<void> _selectTime(BuildContext context, String timeStateName) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: initialTime,
+      initialTime: timeState[timeStateName] != null
+          ? timeState[timeStateName]!
+          : initialTime,
       initialEntryMode: TimePickerEntryMode.inputOnly,
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
@@ -116,6 +118,34 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
     ));
   }
 
+  editTimesheet(BuildContext context, WidgetRef ref) {
+    var argumentValue = ModalRoute.of(context)?.settings?.arguments ?? {};
+    var timesheet = ref
+        .read(timesheetProvider.notifier)
+        .findTimesheet((argumentValue as Map)['props']['timesheetId']);
+    var manHour = calculateTimeDifferenceInHours(
+        timeState['startTime']!, timeState['endTime']!);
+    var selectProject = projectList
+        .firstWhere((project) => project['project_id'] == selectedProject);
+    var selectTask = (selectProject['tasks'] as List<Map<String, dynamic>>)
+        .firstWhere((task) => task['task_id'] == selectedTask);
+    timesheet.man_hour = manHour;
+    timesheet.project_name = selectProject['name'];
+    timesheet.task = selectTask['task'];
+    timesheet.task_id = selectedTask!;
+    timesheet.project_id = selectedProject!;
+    timesheet.start_time = timeState['startTime']!.to24hours();
+    timesheet.finish_time = timeState['endTime']!.to24hours();
+    timesheet.detail = _detailController.text;
+    ref.read(timesheetProvider.notifier).editTimesheet(timesheet);
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('successfully edit timesheet'),
+      backgroundColor: Color(Colors.green.shade300.value),
+    ));
+  }
+
   @override
   void initState() {
     selectedDate = DateTime.now();
@@ -124,31 +154,60 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    var argumentValue = ModalRoute.of(context)?.settings?.arguments ?? {};
+    if ((argumentValue as Map)['type'] == 'edit') {
+      var timesheet = ref
+          .read(timesheetProvider.notifier)
+          .findTimesheet(argumentValue['props']['timesheetId']);
+      selectedProjectTasks = projectList.firstWhere((prooject) =>
+          prooject['project_id'] == timesheet.project_id)['tasks'];
+      selectedDate = DateTime.parse(timesheet.date);
+      _detailController.text = timesheet.detail;
+      timeState['startTime'] = timesheet.start_time.toTimeOfDay();
+      timeState['endTime'] = timesheet.finish_time.toTimeOfDay();
+      timeControllers['startTimeController'] =
+          TextEditingController(text: timesheet.start_time);
+      timeControllers['endTimeController'] =
+          TextEditingController(text: timesheet.finish_time);
+      selectedProject = timesheet.project_id;
+      selectedTask = timesheet.task_id;
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _dateController.dispose();
     timeControllers['startTimeController']?.dispose();
     timeControllers['endTimeController']?.dispose();
+    selectedProject = null;
+    selectedTask = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var headerType = ModalRoute.of(context)?.settings?.arguments;
+    var argument = ModalRoute.of(context)?.settings?.arguments ?? {};
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(headerType == 'add' ? 'Add Timesheet' : 'Edit Timesheet'),
+          title: Text((argument as Map)['type'] == 'add'
+              ? 'Add Timesheet'
+              : 'Edit Timesheet'),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (_formKey.currentState?.validate() == true) {
-              addTimesheet(context, ref);
+              argument['type'] == 'add'
+                  ? addTimesheet(context, ref)
+                  : editTimesheet(context, ref);
             }
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
-          child: const Icon(Icons.add),
+          child: Icon(argument['type'] == 'add' ? Icons.add : Icons.edit),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: SingleChildScrollView(
@@ -225,6 +284,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
                     margin: const EdgeInsets.only(bottom: 10),
                     child: DropdownButtonFormField(
                       decoration: const InputDecoration(labelText: 'project'),
+                      value: selectedProject,
                       onChanged: (value) {
                         setState(() {
                           selectedProject = value;
@@ -250,6 +310,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
                   Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: DropdownButtonFormField(
+                      value: selectedTask,
                       onChanged: (value) {
                         setState(() {
                           selectedTask = value;

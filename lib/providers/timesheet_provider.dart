@@ -21,6 +21,20 @@ class TimesheetNotifier extends StateNotifier<List<Timesheet>> {
   void addTimesheet(Timesheet timesheet) {
     state = [...state, timesheet];
   }
+
+  void editTimesheet(Timesheet editedTimesheet) {
+    state = state.map((timesheet) {
+      if (timesheet.timesheet_id == editedTimesheet.timesheet_id) {
+        return editedTimesheet;
+      }
+      return timesheet;
+    }).toList();
+  }
+
+  Timesheet findTimesheet(String timesheetId) {
+    return state
+        .firstWhere((timesheet) => timesheet.timesheet_id == timesheetId);
+  }
 }
 
 final timesheetProvider =

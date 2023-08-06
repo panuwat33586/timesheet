@@ -26,7 +26,7 @@ class _TimesheetScreenState extends ConsumerState<TimesheetScreen> {
           IconButton(
               onPressed: () => {
                     Navigator.pushNamed(context, EditTimesheetScreen.routeName,
-                        arguments: 'add')
+                        arguments: {'type': 'add', 'props': {}})
                   },
               icon: const Icon(Icons.add))
         ],

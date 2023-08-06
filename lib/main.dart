@@ -5,9 +5,22 @@ import 'package:timesheet/screens/timesheet_screen.dart';
 
 extension TimeOfDayConverter on TimeOfDay {
   String to24hours() {
-    final hour = this.hour.toString().padLeft(2, "0");
-    final min = this.minute.toString().padLeft(2, "0");
-    return "$hour:$min:00";
+    final convertHour = hour.toString().padLeft(2, "0");
+    final min = minute.toString().padLeft(2, "0");
+    return "$convertHour:$min:00";
+  }
+}
+
+extension StringToTimeOfDay on String {
+  TimeOfDay? toTimeOfDay() {
+    final timeParts = split(":");
+    if (timeParts.length > 0) {
+      int hours = int.parse(timeParts[0]);
+      int minutes = int.parse(timeParts[1]);
+      return TimeOfDay(hour: hours, minute: minutes);
+    } else {
+      return null;
+    }
   }
 }
 
