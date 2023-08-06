@@ -109,13 +109,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
         timeState['endTime']!.to24hours(),
         selectTask['task_id'],
         selectProject['project_id']);
-    ref.read(timesheetProvider.notifier).addTimesheet(newTimeSheet);
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('successfully add timesheet'),
-      backgroundColor: Color(Colors.green.shade300.value),
-    ));
+    ref.read(timesheetProvider.notifier).addTimesheet(context, newTimeSheet);
   }
 
   editTimesheet(BuildContext context, WidgetRef ref) {
@@ -137,13 +131,7 @@ class _EditTimesheetScreenState extends ConsumerState<EditTimesheetScreen> {
     timesheet.start_time = timeState['startTime']!.to24hours();
     timesheet.finish_time = timeState['endTime']!.to24hours();
     timesheet.detail = _detailController.text;
-    ref.read(timesheetProvider.notifier).editTimesheet(timesheet);
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('successfully edit timesheet'),
-      backgroundColor: Color(Colors.green.shade300.value),
-    ));
+    ref.read(timesheetProvider.notifier).editTimesheet(context, timesheet);
   }
 
   @override

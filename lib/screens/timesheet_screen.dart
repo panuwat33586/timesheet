@@ -15,6 +15,12 @@ class TimesheetScreen extends ConsumerStatefulWidget {
 
 class _TimesheetScreenState extends ConsumerState<TimesheetScreen> {
   @override
+  void initState() {
+    ref.read(timesheetProvider.notifier).loadTimesheets();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final timesheets = ref.watch(timesheetProvider);
     var maxHeight = MediaQuery.of(context).size.height;

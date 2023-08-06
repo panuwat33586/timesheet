@@ -23,4 +23,21 @@ class Timesheet {
     this.task_id,
     this.project_id,
   );
+
+  Map<String, dynamic> toRequest() {
+    return {
+      'id': timesheet_id,
+      'timesheet_id': timesheet_id,
+      'date': date,
+      'man_hour': man_hour,
+      'project_name': project_name,
+      'task': task,
+      'detail': detail,
+      'timesheet_status': timesheet_status,
+      'start_time': start_time,
+      'finish_time': finish_time,
+      'task_id': task_id,
+      'project_id': project_id,
+    };
+  }
 }

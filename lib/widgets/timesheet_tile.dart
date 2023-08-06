@@ -31,12 +31,7 @@ class TimeSheetTile extends ConsumerWidget {
   ) {
     ref
         .read(timesheetProvider.notifier)
-        .deleteTimesheet(timesheet.timesheet_id);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('successfully delete timesheet'),
-      backgroundColor: Color(Colors.green.shade300.value),
-    ));
+        .deleteTimesheet(context, timesheet.timesheet_id);
   }
 
   editTimesheet(BuildContext context) {
