@@ -16,7 +16,7 @@ class TimesheetScreen extends ConsumerStatefulWidget {
 class _TimesheetScreenState extends ConsumerState<TimesheetScreen> {
   @override
   void initState() {
-    ref.read(timesheetProvider.notifier).loadTimesheets();
+    ref.read(timesheetProvider.notifier).loadTimesheets(context);
     super.initState();
   }
 
@@ -40,7 +40,8 @@ class _TimesheetScreenState extends ConsumerState<TimesheetScreen> {
       body: Column(
         children: <Widget>[
           Container(
-              height: maxHeight * 0.5,
+              height: maxHeight * 0.8,
+              width: double.infinity,
               child: ListView.builder(
                   itemCount: timesheets.length,
                   itemBuilder: (BuildContext context, int index) =>

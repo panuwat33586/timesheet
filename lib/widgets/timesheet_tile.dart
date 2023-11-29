@@ -86,23 +86,23 @@ class TimeSheetTile extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  DateFormat('dd-MM-yyyy')
-                      .format(DateTime.parse(timesheet.date)),
-                ),
+                Text(DateFormat('dd-MM-yyyy')
+                    .format(DateTime.parse(timesheet.date))),
                 Text(
                   "${timesheet.start_time} - ${timesheet.finish_time}",
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(left: 20),
-              child: Chip(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                label: Text("${timesheet.man_hour} hours"),
-              ),
-            )
+            Column(children: [
+              Container(
+                margin: const EdgeInsets.only(left: 10),
+                child: Chip(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  label: Text("${timesheet.man_hour} hours"),
+                ),
+              )
+            ])
           ],
         ),
         children: [ListDetail(title: timesheet.task, detail: timesheet.detail)],

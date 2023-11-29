@@ -6,9 +6,17 @@ import 'package:timesheet/services/timesheet.service.dart';
 class TimesheetNotifier extends StateNotifier<List<Timesheet>> {
   TimesheetNotifier() : super([]);
 
-  void loadTimesheets() async {
-    final timesheets = await TimesheetService().fetchTimesheet();
-    state = timesheets;
+  void loadTimesheets(BuildContext context) async {
+    try {
+      final timesheets = await TimesheetService().fetchTimesheet();
+      state = timesheets;
+    } catch (err) {
+      print(err.toString());
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('cannot fetch data'),
+        backgroundColor: Color(Colors.red.shade300.value),
+      ));
+    }
   }
 
   void deleteTimesheet(BuildContext context, String timesheetId) async {
